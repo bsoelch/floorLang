@@ -126,8 +126,10 @@ class FunctionCall(Expression):
       args[f.args[i]]=self.args[i].evaluate(oldArgs,functions)
     if self.repeat is None:
       return f.evaluate(args,functions)
+    if len(self.args)==0:
+      raise Exception("can only repeat functions that take arguments");
     rep=math.floor(self.repeat.evaluate(oldArgs,functions))
-    for _ in range(0,rep): ## TODO error message if f has no arguments
+    for _ in range(0,rep):
       args[f.args[0]]=f.evaluate(args,functions)
     return args[f.args[0]]
     
@@ -166,6 +168,15 @@ def checkExpr(elt):
   if isinstance(elt,FunctionCall) and not elt.hasArgs:
     raise Exception("Syntax error: expected expression got incomplete function call "+str(elt))
   return elt
+
+def isExpr(elt):
+  if not isinstance(elt,Expression):
+    return False
+  if isinstance(elt,Operator) and (elt.left is None or elt.right is None):
+    return False
+  if isinstance(elt,FunctionCall) and not elt.hasArgs:
+    return False
+  return True
   
 def parseExpression(elts):
   i0=0
@@ -238,7 +249,11 @@ def parseExpression(elts):
       elts[i-1]=elts[i]
       elts[i:i+2]=[]
       i-=1
-     ## XXX? reintroduce implicit multiplication
+    elif isExpr(elts[i-1]) and isExpr(elts[i]):
+      mult=Operator("*",checkExpr(elts[i-1]),checkExpr(elts[i]))
+      elts[i-1]=mult
+      elts[i:i+1]=[]
+      i-=1
     i+=1
   i=1
   while i+1<len(elts): ## addition and subtraction
@@ -307,8 +322,6 @@ def parseLine(line,functions):
         continue
       if re.match(r"[0-9]+$",y):
         elements.append(Number(int(y)))
-        if len(x)>1:
-          elements.append(Operator("*"))
       elif y in myArgs:
         elements.append(myArgs[y])
       elif y in functions:
@@ -367,6 +380,7 @@ def main():
   parser.add_argument('-X', dest='out_mode',action='store_const',const="hex")
   parser.add_argument('-b', dest='in_mode',action='store_const',const="bin")
   parser.add_argument('-B', dest='out_mode',action='store_const',const="bin")
+  parser.add_argument('-v', dest='verbose',action='store_true')
   parser.add_argument('params', nargs='*')
   args=parser.parse_args()
   params=[parseParam(p,args.in_mode) for p in args.params]
@@ -382,8 +396,9 @@ def main():
   for line in code.split("\n"):
     parseLine(line,functions)
   
-  for f in functions.values():
-    print(f)
+  if args.verbose:
+    for f in functions.values():
+      print(f)
   f=functions.get("f")
   if f is not None:
     if len(params)<len(f.args):
