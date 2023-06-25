@@ -1,0 +1,3 @@
+f: -> 2645608968345021733469237830984
+
+# needs to be run in string-mode (-S flag)

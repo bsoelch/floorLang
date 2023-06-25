@@ -1,0 +1,12 @@
+bool: x -> - floor( -x²/(x²+1))
+lt: x y -> -(floor((x-y)/((x-y)²+1)))
+
+intPair: x y -> x + 1/y
+left: x -> floor x
+right: x -> 1/(x-floor x)
+
+fib_step: xy -> intPair right xy (left xy +right xy)
+fib: n -> (bool lt n 2)+ (1-(bool lt n 2))*(left fib_step^(n-1)(3/2))
+
+f: n -> fib n
+

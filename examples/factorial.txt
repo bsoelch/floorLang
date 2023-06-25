@@ -1,0 +1,11 @@
+bool: x -> - floor( -x²/(x²+1))
+lt: x y -> -(floor((x-y)/((x-y)²+1)))
+
+intPair: x y -> x + 1/y
+left: x -> floor x
+right: x -> 1/(x-floor x)
+
+factorial_step: xn -> intPair (left xn * right xn) ((right xn)-1)
+factorial: n -> (bool lt n 2)+(1-(bool lt n 2))*(left factorial_step^(n-1)(1+1/n)-1)
+
+f: n -> factorial n
