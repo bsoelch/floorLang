@@ -1,5 +1,5 @@
-bool: x -> - floor( -x²/(x²+1))
-lt: x y -> -(floor((x-y)/((x-y)²+1)))
+bool: x -> - floor( -x^2/(x^2+1))
+lt: x y -> -(floor((x-y)/((x-y)^2+1)))
 
 intPair: x y -> x + 1/y
 left: x -> floor x

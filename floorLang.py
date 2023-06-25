@@ -274,7 +274,7 @@ def parseLine(line,functions):
   line=line.strip();
   if len(line)==0 or line[0]=='#':
     return
-  parts=re.split("(->|"+IDENTIFER_REGEX+":|[\\+\\-*/^ \t\\(\\)\\[\\]\\{\\}²³])",line);
+  parts=re.split("(->|"+IDENTIFER_REGEX+":|[\\+\\-*/^ \t\\(\\)\\[\\]\\{\\}])",line);
   parts=list(filter(lambda a: len(a)>0, map(lambda a:a.strip(),parts)))
   if len(parts)==0:
     return
@@ -304,12 +304,6 @@ def parseLine(line,functions):
       continue
     if x in ['+','-','*','/','^']:
       elements.append(Operator(x))
-      continue
-    if x =='²':
-      elements.append(Operator("^",None,Number(2)))
-      continue
-    if x =='³':
-      elements.append(Operator("^",None,Number(3)))
       continue
     if x in ['(',')','[',']','{','}']:
       elements.append(Bracket(x))
