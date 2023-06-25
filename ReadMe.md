@@ -1,7 +1,7 @@
 # floor
 Is a programming language based on arithmetic expressions.
 
-A floor program defines a function from a tuple of integers to the integers using only the arithmetic operators `+` `-` `*` `/`, integral powers (`^`) as well as `floor`-function
+A floor program defines a function from a tuple of integers to the integers using only the arithmetic operators `+` `-` `*` `/`, integral powers (`^`) as well as the `floor`-function
 
 ## Examples
 
@@ -35,7 +35,7 @@ left: x -> floor x
 right: x -> 1/(x-floor x)
 
 # fib-step will be repeatedly applyed to its own return value
-fib_step: xy -> intPair right xy (left xy +right xy)
+fib_step: xy -> intPair right xy (left xy + right xy)
 fib: n -> (bool lt n 2)+ (1-(bool lt n 2))*(left fib_step^(n-1)(3/2))
 
 f: n -> fib n
@@ -62,7 +62,7 @@ The parameters are passed as parameters to the function `f` in the program file
 
 ## Syntax
 
-A floor program consists of a series of function from tuples of integers to the integers
+A floor program consists of a series of function from tuples of integers to the integers.
 
 The when executing a floor program the function `f` will be called with the arguments given to the program.
 
@@ -98,11 +98,12 @@ Exponentiation is evaluated right to left, all other operations are evaluated le
 floor x + 1/2   -> (floor x)+(1/2)
 ```
 
-All calculations are performed on rational numbers
-If the right operand of `^` is not a integer it will be rounded down (towards minus infinity) to the nearest integer,
-i.e `2^(1/2)  ->  2^0  ->  1`.
-Division by zero will evaluate to `0`, this includes taking zero to negative powers.
-The exception to this rule are `0/0` and `0^0` which will evaluate to `1`.
+All calculations are performed on rational numbers.
+
+Special cases:
+- If the right operand of `^` is not a integer it will be rounded down (towards minus infinity) to the nearest integer, e.g. `2^(1/2)  ->  2^0  ->  1`.
+- Division by zero will evaluate to `0`, this includes taking zero to negative powers.
+- The exception to this rule are `0/0` and `0^0` which will evaluate to `1`.
 
 The `^` operator can also be used on functions, in this context it refers to repeated application of that function,
 if the function has more than one argument, the remaining arguments will be passed to all calls.
@@ -120,7 +121,7 @@ mult: a b -> add^b 0 a
 
 The basic building block for control flow this is that `floor x` evaluates to `0` if `x` is in `(0,1)` but to `-1` if x is in `(-1,0)`.
 
-This asymmetry can be used to construct indicator functions for different conditions for instance:
+This asymmetry can be used to construct indicator functions for different conditions, for instance:
 
 - being a positive/negative: `isPositive: x -> -floor(-x/(x^2+1))` `isNegative: x -> -floor(x/(x^2+1))`
 - being nonzero: `bool: x -> - floor( -x²/(x²+1))`
