@@ -8,47 +8,47 @@ class Bracket:
   def __init__(self,bracket):
     self.brackets=['()','()','[]','[]','{}','{}'][['(',')','[',']','{','}'].index(bracket)]
     self.isOpen=bracket in ['(','[','{']
-  
+
   def __repr__(self):
     if self.isOpen:
       return self.brackets[0]
     else:
       return self.brackets[1]
-    
+
 class Expression:
   pass
-  
+
 class Number(Expression):
   def __init__(self,value):
     self.value=value
-    
+
   def __str__(self):
     return str(self.value)
-    
+
   def __repr__(self):
     return str(self.value)
-    
+
   def evaluate(self,args,functions):
     return Fraction(self.value)
-  
+
 class Argument(Expression):
   def __init__(self,name):
     self.name=name
-    
+
   def __str__(self):
     return self.name
-    
+
   def __repr__(self):
     return self.name
-    
+
   def __eq__(self,other):
     if not isinstance(other,Argument):
       return False
     return self.name==other.name
-    
+
   def __hash__(self):
     return hash(self.name)
-    
+
   def evaluate(self,args,functions):
     val=args.get(self)
     if val is None:
@@ -56,14 +56,14 @@ class Argument(Expression):
     elif isinstance(val,Expression):
       val=val.evaluate(args,functions)
     return val
-  
+
 
 class Operator(Expression):
   def __init__(self,opType,left=None,right=None):
     self.opType=opType;
     self.left=left;
     self.right=right;
-  
+
   def __str__(self):
     if self.left is None:
       left="?"
@@ -74,10 +74,10 @@ class Operator(Expression):
     else:
       right=repr(self.right)
     return left+self.opType+right;
-    
+
   def __repr__(self):
     return "("+str(self)+")";
-    
+
   def evaluate(self,args,functions):
     l=self.left.evaluate(args,functions);
     if l==0 and (self.opType=="*"):
@@ -107,7 +107,7 @@ class FunctionCall(Expression):
       if e!=None:
         self.hasArgs=True
     self.args=args
-    
+
   def __repr__(self):
     exp=""
     if self.repeat!=None:
@@ -132,16 +132,16 @@ class FunctionCall(Expression):
     for _ in range(0,rep):
       args[f.args[0]]=f.evaluate(args,functions)
     return args[f.args[0]]
-    
+
 class Function:
   def __init__(self,name,args,body):
     self.name=name
     self.args=args
     self.body=body
-    
+
   def __repr__(self):
     return self.name+": "+str(self.args)[1:-1].replace(",","")+" -> "+str(self.body);
-    
+
   def evaluate(self,args,functions):
     return self.body.evaluate(args,functions)
 
@@ -153,13 +153,13 @@ class BuiltinFunction(Function):
 
   def __repr__(self):
     return self.name+": "+str(self.args)[1:-1].replace(",","")+" -> ...";
-    
+
   def evaluate(self,args,functions):
     mArgs=[]
     for a in self.args:
       mArgs.append(args[a]) ## XXX? error message for missing argument
     return self.f(*mArgs)
- 
+
 def checkExpr(elt):
   if not isinstance(elt,Expression):
     raise Exception("Syntax error: expected expression got "+str(type(elt))+" "+str(elt))
@@ -177,7 +177,7 @@ def isExpr(elt):
   if isinstance(elt,FunctionCall) and not elt.hasArgs:
     return False
   return True
-  
+
 def parseExpression(elts):
   i0=0
   openBrackets=0
@@ -350,7 +350,7 @@ def parseParam(val,mode):
       shift+=8
     return v
   raise Exception(f"unknown input mode: {mode}")
-  
+
 def valueToString(val,mode):
   if mode==None:
     return str(val)
@@ -395,7 +395,7 @@ def main():
   functions["-"]=BuiltinFunction("-",[Argument("x")],lambda x:-x)
   for line in code.split("\n"):
     parseLine(line,functions)
-  
+
   if args.verbose:
     for f in functions.values():
       print(f)
@@ -409,6 +409,6 @@ def main():
     for i in range(0, len(f.args)):
       f_args[f.args[i]]=params[i]
     print(valueToString(f.evaluate(f_args,dict(functions)),args.out_mode))
-  
+
 if __name__ == "__main__":
   main()
