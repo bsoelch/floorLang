@@ -1,0 +1,10 @@
+lt: x y -> -(floor((x-y)/((x-y)^2+1)))
+
+intPair: x y -> x + 1/y
+left: x -> floor x
+right: x -> 1/(x-floor x)
+
+not_int: x -> -floor(floor x - x)
+
+prime_step: n_k -> intPair (not_int(left n_k / right n_k) * left n_k) (1+right n_k)
+f: n -> (lt 1 n)*(left prime_step^(n-2)(n+1/2))

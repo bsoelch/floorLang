@@ -1,0 +1,10 @@
+intPair: x y -> x + 1/y
+left: x -> floor x
+right: x -> 1/(x-floor x)
+
+is_int: x -> 1+floor(floor x - x)
+
+
+fakt_1: n_k -> intPair ((left n_k)*(right n_k)) (right n_k - 1)
+
+f: n -> (n-1)*is_int( (left fakt_1^(n-2) intPair 1 (n-1))/n)
