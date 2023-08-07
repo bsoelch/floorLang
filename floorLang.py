@@ -93,7 +93,7 @@ class Operator(Expression):
       return l*r
     if self.opType=="/":
       if r==0: return 0;
-      return l/r
+      return l/Fraction(r)
     if self.opType=="^":
       if l==0 and r<0: return 0;
       return l**math.floor(r)
